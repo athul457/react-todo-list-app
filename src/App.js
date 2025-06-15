@@ -1,25 +1,93 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+
+const initialItems = [
+  { id: 1, description: "Passports", quantity: 2, packed: true },
+  { id: 2, description: "Socks", quantity: 12, packed: false },
+  { id: 3, description: "Charger", quantity: 1, packed: true },
+];
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="app">
+        <Logo />
+        <Form /> 
+        <PackingList /> 
+        <Status />
+      </div>
+    </>
   );
 }
 
+function Logo(){
+  return (
+    <h1>🌴 FAR AWAY 👜</h1>
+  )
+}
+
+function Form(){
+
+  const [description,setDescription] = useState("");
+  const [quantity,setQuantity] = useState(1);
+
+  function handleSubmit(e){
+    e.preventDefault() ;
+    if(!description) return ;
+    const newItems = {description,quantity,packed :false ,id :Date.now()}
+    console.log(newItems)
+    setDescription("");
+    setQuantity(1)
+  }
+
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+    <h3>What do you need for your trip</h3>
+      <select value={quantity} onChange={(e)=>setQuantity(Number(e.target.value))}>
+        {Array.from({length : 20} ,(_,i)=>i+1).map((num)=>(
+          <option value={num} key={num} >
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" 
+      placeholder="item....." 
+      value={description} 
+      onChange={(e)=>setDescription(e.target.value)}></input>
+      <button>Add</button>
+    </form>
+  )
+}
+
+function PackingList(){
+  const items = initialItems;
+  return (
+    <div className="list">
+        <ul>
+        {
+        items.map((item)=>(
+          <Item itemObj= {item} key={item.id}/>
+        ))
+        }
+        </ul>
+    </div>
+  )
+}
+
+function Item({itemObj}){
+  return <li>
+      <span className={itemObj.packed ?
+      ("decoration"):
+      ("")}>{itemObj.description} {itemObj.quantity}</span>
+      {/* <span style={itemObj.packed ? {textDecoration: "line-through"} : {}}>{itemObj.description} {itemObj.quantity}</span> */}
+      <button>❌</button>
+    </li>
+}
+
+function Status(){
+  return (
+    <footer className="stats">
+      <em>You have X items on your list , And you already packed X (x %)</em>
+    </footer>
+  )
+}
 export default App;

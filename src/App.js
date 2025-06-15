@@ -1,18 +1,23 @@
 import { useState } from "react";
 
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: true },
-  { id: 2, description: "Socks", quantity: 12, packed: false },
-  { id: 3, description: "Charger", quantity: 1, packed: true },
-];
+// const initialItems = [
+//   { id: 1, description: "Passports", quantity: 2, packed: true },
+//   { id: 2, description: "Socks", quantity: 12, packed: false },
+//   { id: 3, description: "Charger", quantity: 1, packed: true },
+// ];
 
 function App() {
+  const [item,setItems] = useState([]) ;
+
+  function handleAddItems(newItems){
+    setItems((item)=>[...item,newItems])
+  }
   return (
     <>
       <div className="app">
         <Logo />
-        <Form /> 
-        <PackingList /> 
+        <Form onAdditems={handleAddItems}/> 
+        <PackingList item={item}/> 
         <Status />
       </div>
     </>
@@ -25,16 +30,18 @@ function Logo(){
   )
 }
 
-function Form(){
+function Form({onAdditems}){
 
   const [description,setDescription] = useState("");
   const [quantity,setQuantity] = useState(1);
+
 
   function handleSubmit(e){
     e.preventDefault() ;
     if(!description) return ;
     const newItems = {description,quantity,packed :false ,id :Date.now()}
     console.log(newItems)
+    onAdditems(newItems)
     setDescription("");
     setQuantity(1)
   }
@@ -58,13 +65,13 @@ function Form(){
   )
 }
 
-function PackingList(){
-  const items = initialItems;
+function PackingList({item}){
+  
   return (
     <div className="list">
         <ul>
         {
-        items.map((item)=>(
+        item.map((item)=>(
           <Item itemObj= {item} key={item.id}/>
         ))
         }
@@ -75,7 +82,7 @@ function PackingList(){
 
 function Item({itemObj}){
   return <li>
-      <span className={itemObj.packed ?
+      <></><span className={itemObj.packed ?
       ("decoration"):
       ("")}>{itemObj.description} {itemObj.quantity}</span>
       {/* <span style={itemObj.packed ? {textDecoration: "line-through"} : {}}>{itemObj.description} {itemObj.quantity}</span> */}

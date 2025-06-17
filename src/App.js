@@ -12,12 +12,17 @@ function App() {
   function handleAddItems(newItems){
     setItems((item)=>[...item,newItems])
   }
+
+  function handleDeleteItems(id){
+    setItems(item=> item.filter((i)=> i.id !== id))
+  }
+
   return (
     <>
       <div className="app">
         <Logo />
         <Form onAdditems={handleAddItems}/> 
-        <PackingList item={item}/> 
+        <PackingList item={item} delitem={handleDeleteItems}/> 
         <Status />
       </div>
     </>
@@ -35,7 +40,6 @@ function Form({onAdditems}){
   const [description,setDescription] = useState("");
   const [quantity,setQuantity] = useState(1);
 
-
   function handleSubmit(e){
     e.preventDefault() ;
     if(!description) return ;
@@ -45,6 +49,8 @@ function Form({onAdditems}){
     setDescription("");
     setQuantity(1)
   }
+
+
 
   return (
     <form className="add-form" onSubmit={handleSubmit}>
@@ -65,14 +71,14 @@ function Form({onAdditems}){
   )
 }
 
-function PackingList({item}){
+function PackingList({delitem,item}){
   
   return (
     <div className="list">
         <ul>
         {
-        item.map((item)=>(
-          <Item itemObj= {item} key={item.id}/>
+        item.map((i)=>(
+          <Item itemObj= {i} key={i.id} delitem={delitem}/>
         ))
         }
         </ul>
@@ -80,13 +86,13 @@ function PackingList({item}){
   )
 }
 
-function Item({itemObj}){
+function Item({delitem,itemObj}){
   return <li>
       <></><span className={itemObj.packed ?
       ("decoration"):
       ("")}>{itemObj.description} {itemObj.quantity}</span>
       {/* <span style={itemObj.packed ? {textDecoration: "line-through"} : {}}>{itemObj.description} {itemObj.quantity}</span> */}
-      <button>❌</button>
+      <button onClick={()=>delitem(itemObj.id)}>❌</button>
     </li>
 }
 

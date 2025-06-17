@@ -9,6 +9,10 @@ import { useState } from "react";
 function App() {
   const [item,setItems] = useState([]) ;
 
+  function handleToggleItems(id){
+    setItems((item)=>item.map((i)=>i.id === id ? {...i,packed:!i.packed} : item))
+  }
+
   function handleAddItems(newItems){
     setItems((item)=>[...item,newItems])
   }
@@ -22,8 +26,11 @@ function App() {
       <div className="app">
         <Logo />
         <Form onAdditems={handleAddItems}/> 
-        <PackingList item={item} delitem={handleDeleteItems}/> 
-        <Status />
+        <PackingList 
+        item={item} 
+        delitem={handleDeleteItems} 
+        handleToggleItems={handleToggleItems}/> 
+        <Status item={item}/>
       </div>
     </>
   );
@@ -50,8 +57,6 @@ function Form({onAdditems}){
     setQuantity(1)
   }
 
-
-
   return (
     <form className="add-form" onSubmit={handleSubmit}>
     <h3>What do you need for your trip</h3>
@@ -71,14 +76,16 @@ function Form({onAdditems}){
   )
 }
 
-function PackingList({delitem,item}){
+function PackingList({delitem,item ,handleToggleItems}){
   
   return (
     <div className="list">
         <ul>
         {
         item.map((i)=>(
-          <Item itemObj= {i} key={i.id} delitem={delitem}/>
+          <Item itemObj= {i} key={i.id} 
+          delitem={delitem} 
+          handleToggleItems={handleToggleItems}/>
         ))
         }
         </ul>
@@ -86,21 +93,27 @@ function PackingList({delitem,item}){
   )
 }
 
-function Item({delitem,itemObj}){
+function Item({delitem,itemObj,handleToggleItems}){
   return <li>
-      <></><span className={itemObj.packed ?
-      ("decoration"):
-      ("")}>{itemObj.description} {itemObj.quantity}</span>
+      <input 
+      type="checkbox" value={itemObj.id} onClick={()=>handleToggleItems(itemObj.id)}/>
+      <span 
+      className={itemObj.packed ?("decoration"):("")}>{itemObj.description} {itemObj.quantity}</span>
       {/* <span style={itemObj.packed ? {textDecoration: "line-through"} : {}}>{itemObj.description} {itemObj.quantity}</span> */}
-      <button onClick={()=>delitem(itemObj.id)}>❌</button>
+      <button 
+      onClick={()=>delitem(itemObj.id)}>❌</button>
     </li>
 }
 
-function Status(){
+function Status({item}){
+  const numsOfItems = item.length ;
+  const numItemPacked = item.filter((item)=>item.packed).length
+  const packedPercentage = Math.round((numItemPacked / numsOfItems) *100)
   return (
     <footer className="stats">
-      <em>You have X items on your list , And you already packed X (x %)</em>
+      <em>You have {numsOfItems} items on your list , And you already packed {numItemPacked} ({packedPercentage} %)</em>
     </footer>
   )
 }
+
 export default App;

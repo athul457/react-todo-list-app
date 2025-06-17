@@ -45,6 +45,7 @@ function App(){
 // ! <-------------------Logo------------------------>
 
 function Logo(){
+  
   return (
     <>
       <h1>🌴 FAR AWAY 👜</h1>
@@ -101,6 +102,7 @@ function Form({addItems}){
     setDescription('');
     setQuantity(1);
   } 
+
    return (
      <form className="add-form" onSubmit={handleSubmit}>
      <h3>What do you need for your trip</h3>
